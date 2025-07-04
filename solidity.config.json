@@ -1,0 +1,4 @@
+{
+  "includePath": "node_modules",
+  "excludePath": "node_modules/@nomicfoundation"
+}
