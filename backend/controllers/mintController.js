@@ -1,29 +1,43 @@
-// 📄 backend/controllers/mintController.js
+// controllers/mintController.js
+require("dotenv").config();
+const { ethers } = require("ethers");
+const pinataSDK = require("@pinata/sdk");
 
-const { exec } = require("child_process");
-const path = require("path");
+const pinata = new pinataSDK(process.env.PINATA_PRIVATE_KEY, process.env.PINATA_SECRET_API_KEY); // ✅ updated key
+const CertNFT = require('../../artifacts/contracts/CertNFT.sol/CertNFT.json');
 
-module.exports = async (req, res) => {
-  const { recipient, metadataURI } = req.body;
+const provider = new ethers.JsonRpcProvider(process.env.ALCHEMY_API_URL);
+const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
+const contract = new ethers.Contract(process.env.CONTRACT_ADDRESS, CertNFT.abi, wallet);
 
-  if (!recipient || !metadataURI) {
-    return res.status(400).json({ error: "Wallet address and metadataURI required" });
+const mintCertificate = async (req, res) => {
+  try {
+    const { studentAddress, studentName, courseName } = req.body;
+
+    if (!studentAddress || !studentName || !courseName) {
+      return res.status(400).json({ success: false, error: "Missing fields in request" });
+    }
+
+    const metadata = {
+      name: `Certificate: ${courseName}`,
+      description: `Awarded to ${studentName} for completing ${courseName}`,
+      image: "ipfs://bafybeifmseec7syex3rhps4gn2lvqn5osktqh6tn4v63yd4yglsb3xso74"
+    };
+
+    const pinataRes = await pinata.pinJSONToIPFS(metadata);
+    const tokenURI = `ipfs://${pinataRes.IpfsHash}`;
+
+    console.log("Minting to address:", studentAddress);
+    console.log("Token URI:", tokenURI);
+
+    const tx = await contract.mint(studentAddress, tokenURI);
+    await tx.wait();
+
+    res.json({ success: true, message: "Certificate minted!", txHash: tx.hash });
+  } catch (err) {
+    console.error("Minting error:", err);
+    res.status(500).json({ success: false, error: err.message || "Minting failed" });
   }
-
-  const scriptPath = path.resolve(__dirname, "../../scripts/mintNFT.js");
-
-  const command = `npx cross-env MINT_RECIPIENT=${recipient} MINT_METADATA_URI=${metadataURI} npx hardhat run ${scriptPath} --network amoy`;
-
-  exec(command, (error, stdout, stderr) => {
-    if (error) {
-      console.error("❌ Script Error:", error.message);
-      return res.status(500).json({ error: "Minting failed", details: error.message });
-    }
-    if (stderr) {
-      console.error("❌ STDERR:", stderr);
-    }
-
-    console.log("✅ Output:", stdout);
-    return res.status(200).json({ success: true, message: "NFT Minted!", output: stdout });
-  });
 };
+
+module.exports = { mintCertificate };

@@ -1,28 +1,21 @@
-{
-  "name": "Certificate: ETHEREUM DEVELOPER",
-  "description": "Awarded to the learner for successfully completing the ETHEREUM DEVELOPER course with ProofLearn.xyz.",
-  "image": "ipfs://bafkreiet3v6ymxee36en7h3d5ygxltzcjjyuxhcltbxbz2jlcolixtt4i4",
-  "external_url": "https://prooflearn.xyz/u/username/solidity1",
-  "attributes": [
-    {
-      "trait_type": "Course",
-      "value": "Intro to Solidity"
-    },
-    {
-      "trait_type": "Score",
-      "value": "85%"
-    },
-    {
-      "trait_type": "Issued By",
-      "value": "ProofLearn.xyz"
-    },
-    {
-      "trait_type": "Date",
-      "value": "2025-07-01"
-    },
-    {
-      "trait_type": "Soulbound",
-      "value": "True"
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+
+contract CertNFT is ERC721URIStorage, Ownable {
+    uint256 public tokenCounter;
+
+    constructor() ERC721("CertificateNFT", "CNFT") Ownable(msg.sender) {
+        tokenCounter = 0;
     }
-  ]
+
+    function mint(address recipient, string memory tokenURI) public onlyOwner returns (uint256) {
+        uint256 newTokenId = tokenCounter;
+        _mint(recipient, newTokenId);
+        _setTokenURI(newTokenId, tokenURI);
+        tokenCounter += 1;
+        return newTokenId;
+    }
 }

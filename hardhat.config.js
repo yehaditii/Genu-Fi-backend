@@ -1,12 +1,22 @@
-require("@nomicfoundation/hardhat-toolbox");
 require("dotenv").config();
+require("@nomicfoundation/hardhat-toolbox");
 
 module.exports = {
-  solidity: "0.8.20",
+  solidity: {
+    compilers: [
+      {
+        version: "0.8.20",
+      },
+      {
+        version: "0.8.28",
+      },
+    ],
+  },
   networks: {
     amoy: {
       url: process.env.ALCHEMY_API_URL,
-      accounts: [process.env.PRIVATE_KEY]
-    }
-  }
+      accounts: [process.env.PRIVATE_KEY],
+      chainId: 80002,
+    },
+  },
 };
