@@ -8,12 +8,12 @@ contract CertNFT is ERC721URIStorage, Ownable {
     uint256 public tokenCounter;
 
     constructor() ERC721("CertificateNFT", "CNFT") Ownable(msg.sender) {
-        tokenCounter = 0;
+        tokenCounter = 1;
     }
 
     function mint(address recipient, string memory tokenURI) public onlyOwner returns (uint256) {
         uint256 newTokenId = tokenCounter;
-        _mint(recipient, newTokenId);
+        _safeMint(recipient, newTokenId);
         _setTokenURI(newTokenId, tokenURI);
         tokenCounter += 1;
         return newTokenId;
