@@ -13,23 +13,6 @@ This is the backend service for **GenuFi**, a decentralized certification platfo
 
 ---
 
-## 📁 Project Structure
-
-GenuFi-backend/
-├── contracts/ # Solidity smart contracts (e.g. CertNFT.sol)
-├── controllers/ # Express route handlers (e.g. mintController.js)
-├── routes/ # API routes (e.g. mintRoute.js)
-├── scripts/ # Hardhat deployment scripts
-├── artifacts/ # Compiled smart contract ABIs (generated)
-├── backend/ # Server entry point and env
-│ ├── server.js # Main Express server
-│ ├── .env.example # Example environment variables
-├── hardhat.config.js # Hardhat config for compiling/deploying
-└── package.json # Project dependencies and scripts
-
-
----
-
 ## 🚀 Deployment
 
 ### Requirements
