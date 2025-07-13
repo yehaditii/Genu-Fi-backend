@@ -70,9 +70,3 @@ Frontend Repo: GenuFi Frontend on GitHub
 
 📄 License
 MIT © 2025 GenuFi
-
-yaml
-Copy
-Edit
-
----
